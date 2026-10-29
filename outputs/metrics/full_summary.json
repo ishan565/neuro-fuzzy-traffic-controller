@@ -1,0 +1,148 @@
+{
+  "project": "Smart Traffic Signal Control using Neuro-Fuzzy System",
+  "dataset": {
+    "total_samples": 5000,
+    "features": 4,
+    "targets": 3,
+    "emergency_percentage": "4.8%"
+  },
+  "fuzzy_system": {
+    "type": "Mamdani FIS",
+    "rules": 28,
+    "defuzzification": "Centroid"
+  },
+  "neural_network": {
+    "green_duration": {
+      "MSE": 17.1451,
+      "RMSE": 4.1407,
+      "MAE": 3.2748,
+      "R2": 0.9543,
+      "MAPE": 10.05
+    },
+    "signal_priority": {
+      "MSE": 0.0455,
+      "RMSE": 0.2133,
+      "MAE": 0.1453,
+      "R2": 0.958,
+      "MAPE": 8.58
+    },
+    "congestion_level": {
+      "MSE": 21.4348,
+      "RMSE": 4.6298,
+      "MAE": 3.7185,
+      "R2": 0.948,
+      "MAPE": 56.59
+    },
+    "overall": {
+      "MSE": 12.8751,
+      "RMSE": 3.5882,
+      "MAE": 2.3796,
+      "R2": 0.9534
+    }
+  },
+  "system_comparison": [
+    {
+      "Output": "Green Duration",
+      "System": "Fuzzy",
+      "MSE": 76.1653,
+      "RMSE": 8.7273,
+      "MAE": 7.0165,
+      "R\u00b2": 0.8007
+    },
+    {
+      "Output": "Green Duration",
+      "System": "Neural Network",
+      "MSE": 17.4694,
+      "RMSE": 4.1796,
+      "MAE": 3.2454,
+      "R\u00b2": 0.9543
+    },
+    {
+      "Output": "Green Duration",
+      "System": "Neuro-Fuzzy",
+      "MSE": 31.3595,
+      "RMSE": 5.6,
+      "MAE": 4.2885,
+      "R\u00b2": 0.9179
+    },
+    {
+      "Output": "Signal Priority",
+      "System": "Fuzzy",
+      "MSE": 0.5687,
+      "RMSE": 0.7541,
+      "MAE": 0.5961,
+      "R\u00b2": 0.4796
+    },
+    {
+      "Output": "Signal Priority",
+      "System": "Neural Network",
+      "MSE": 0.0442,
+      "RMSE": 0.2103,
+      "MAE": 0.1377,
+      "R\u00b2": 0.9595
+    },
+    {
+      "Output": "Signal Priority",
+      "System": "Neuro-Fuzzy",
+      "MSE": 0.2029,
+      "RMSE": 0.4504,
+      "MAE": 0.3013,
+      "R\u00b2": 0.8143
+    },
+    {
+      "Output": "Congestion Level",
+      "System": "Fuzzy",
+      "MSE": 136.1974,
+      "RMSE": 11.6704,
+      "MAE": 8.1002,
+      "R\u00b2": 0.6839
+    },
+    {
+      "Output": "Congestion Level",
+      "System": "Neural Network",
+      "MSE": 20.8076,
+      "RMSE": 4.5615,
+      "MAE": 3.6283,
+      "R\u00b2": 0.9517
+    },
+    {
+      "Output": "Congestion Level",
+      "System": "Neuro-Fuzzy",
+      "MSE": 62.3924,
+      "RMSE": 7.8989,
+      "MAE": 5.3962,
+      "R\u00b2": 0.8552
+    }
+  ],
+  "system_info": {
+    "fuzzy": {
+      "type": "Mamdani Fuzzy Inference System",
+      "num_rules": 28,
+      "inputs": 4,
+      "outputs": 3,
+      "defuzzification": "Centroid",
+      "mf_types": "Triangular & Trapezoidal"
+    },
+    "neural_network": {
+      "type": "Multi-Output Feedforward Neural Network",
+      "architecture": "4 \u2192 64 \u2192 128 \u2192 64 \u2192 32 \u2192 3",
+      "activation": "ReLU (hidden), Linear (output)",
+      "optimizer": "Adam",
+      "loss": "Mean Squared Error",
+      "regularization": "BatchNormalization + Dropout(0.3)"
+    },
+    "integration": {
+      "method": "Adaptive Weighted Ensemble",
+      "default_weights": {
+        "fuzzy": 0.4,
+        "nn": 0.6
+      },
+      "adaptive_modes": {
+        "emergency": "70% fuzzy, 30% NN",
+        "extreme": "50% fuzzy, 50% NN",
+        "moderate": "40% fuzzy, 60% NN",
+        "normal": "35% fuzzy, 65% NN"
+      }
+    }
+  }
+}

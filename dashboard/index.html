@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Smart Traffic Signal Control System using Neuro-Fuzzy approach - Interactive Dashboard">
+    <title>🚦 Smart Traffic Signal Control — Neuro-Fuzzy Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+    <div class="bg-glow glow-3"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">🚦</div>
+                <div class="logo-text">
+                    <h1>Smart Traffic Signal Control</h1>
+                    <p class="subtitle">Neuro-Fuzzy Inference System</p>
+                </div>
+            </div>
+            <div class="header-badges">
+                <span class="badge badge-fuzzy">Fuzzy Logic</span>
+                <span class="badge badge-nn">Neural Network</span>
+                <span class="badge badge-nf">Neuro-Fuzzy</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Intersection Simulation -->
+        <section class="section" id="simulation-section">
+            <h2 class="section-title">
+                <span class="section-icon">🏙️</span>
+                Live Intersection Simulation
+            </h2>
+            <div class="intersection-container">
+                <div class="intersection" id="intersection">
+                    <!-- Roads -->
+                    <div class="road road-horizontal"></div>
+                    <div class="road road-vertical"></div>
+                    
+                    <!-- Center box -->
+                    <div class="intersection-center"></div>
+                    
+                    <!-- Traffic Lights -->
+                    <div class="traffic-light-group" id="light-north">
+                        <div class="traffic-light">
+                            <div class="light red" id="north-red"></div>
+                            <div class="light yellow" id="north-yellow"></div>
+                            <div class="light green" id="north-green"></div>
+                        </div>
+                        <div class="road-label">NORTH</div>
+                        <div class="vehicle-count" id="north-count">0 vehicles</div>
+                        <div class="timer-display" id="north-timer">--</div>
+                    </div>
+                    
+                    <div class="traffic-light-group" id="light-south">
+                        <div class="traffic-light">
+                            <div class="light red" id="south-red"></div>
+                            <div class="light yellow" id="south-yellow"></div>
+                            <div class="light green" id="south-green"></div>
+                        </div>
+                        <div class="road-label">SOUTH</div>
+                        <div class="vehicle-count" id="south-count">0 vehicles</div>
+                        <div class="timer-display" id="south-timer">--</div>
+                    </div>
+                    
+                    <div class="traffic-light-group" id="light-east">
+                        <div class="traffic-light">
+                            <div class="light red" id="east-red"></div>
+                            <div class="light yellow" id="east-yellow"></div>
+                            <div class="light green" id="east-green"></div>
+                        </div>
+                        <div class="road-label">EAST</div>
+                        <div class="vehicle-count" id="east-count">0 vehicles</div>
+                        <div class="timer-display" id="east-timer">--</div>
+                    </div>
+                    
+                    <div class="traffic-light-group" id="light-west">
+                        <div class="traffic-light">
+                            <div class="light red" id="west-red"></div>
+                            <div class="light yellow" id="west-yellow"></div>
+                            <div class="light green" id="west-green"></div>
+                        </div>
+                        <div class="road-label">WEST</div>
+                        <div class="vehicle-count" id="west-count">0 vehicles</div>
+                        <div class="timer-display" id="west-timer">--</div>
+                    </div>
+                    
+                    <!-- Vehicle containers for animation -->
+                    <div class="vehicles-north" id="vehicles-north"></div>
+                    <div class="vehicles-south" id="vehicles-south"></div>
+                    <div class="vehicles-east" id="vehicles-east"></div>
+                    <div class="vehicles-west" id="vehicles-west"></div>
+                </div>
+                
+                <!-- Simulation Controls -->
+                <div class="sim-controls">
+                    <button class="btn btn-primary" id="btn-start" onclick="toggleSimulation()">
+                        <span class="btn-icon">▶</span> Start Simulation
+                    </button>
+                    <button class="btn btn-danger" id="btn-emergency" onclick="triggerEmergency()">
+                        <span class="btn-icon">🚨</span> Emergency Vehicle
+                    </button>
+                    <button class="btn btn-secondary" id="btn-rush" onclick="triggerRushHour()">
+                        <span class="btn-icon">🕐</span> Rush Hour
+                    </button>
+                    <div class="speed-control">
+                        <label>Speed:</label>
+                        <input type="range" id="sim-speed" min="1" max="10" value="5" oninput="updateSpeed(this.value)">
+                        <span id="speed-label">5x</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Control Panel -->
+        <section class="section" id="control-section">
+            <h2 class="section-title">
+                <span class="section-icon">🎛️</span>
+                Neuro-Fuzzy Controller — Manual Input
+            </h2>
+            <div class="control-grid">
+                <!-- Input Controls -->
+                <div class="control-card">
+                    <h3 class="card-title">Input Parameters</h3>
+                    
+                    <div class="input-group">
+                        <label>
+                            <span class="input-label">🚗 Number of Vehicles</span>
+                            <span class="input-value" id="vehicles-value">50</span>
+                        </label>
+                        <input type="range" id="input-vehicles" min="0" max="100" value="50" 
+                               oninput="updateInput()">
+                        <div class="range-labels">
+                            <span>0</span><span>50</span><span>100</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            <span class="input-label">📊 Traffic Density</span>
+                            <span class="input-value" id="density-value">50%</span>
+                        </label>
+                        <input type="range" id="input-density" min="0" max="100" value="50" 
+                               oninput="updateInput()">
+                        <div class="range-labels">
+                            <span>0%</span><span>50%</span><span>100%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            <span class="input-label">⏱️ Waiting Time</span>
+                            <span class="input-value" id="waiting-value">90s</span>
+                        </label>
+                        <input type="range" id="input-waiting" min="0" max="180" value="90" 
+                               oninput="updateInput()">
+                        <div class="range-labels">
+                            <span>0s</span><span>90s</span><span>180s</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            <span class="input-label">🚨 Emergency Vehicle</span>
+                            <span class="input-value" id="emergency-value">No</span>
+                        </label>
+                        <div class="toggle-container">
+                            <label class="toggle">
+                                <input type="checkbox" id="input-emergency" onchange="updateInput()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Present</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Output Display -->
+                <div class="control-card output-card">
+                    <h3 class="card-title">System Output</h3>
+                    
+                    <div class="output-grid">
+                        <div class="output-item">
+                            <div class="output-ring" id="ring-green">
+                                <svg viewBox="0 0 120 120">
+                                    <circle class="ring-bg" cx="60" cy="60" r="52"/>
+                                    <circle class="ring-fill" cx="60" cy="60" r="52" id="ring-green-fill"/>
+                                </svg>
+                                <div class="ring-value" id="output-green">60s</div>
+                            </div>
+                            <div class="output-label">Green Duration</div>
+                        </div>
+                        
+                        <div class="output-item">
+                            <div class="output-ring" id="ring-priority">
+                                <svg viewBox="0 0 120 120">
+                                    <circle class="ring-bg" cx="60" cy="60" r="52"/>
+                                    <circle class="ring-fill ring-priority" cx="60" cy="60" r="52" id="ring-priority-fill"/>
+                                </svg>
+                                <div class="ring-value" id="output-priority">3</div>
+                            </div>
+                            <div class="output-label">Priority Level</div>
+                        </div>
+                        
+                        <div class="output-item">
+                            <div class="output-ring" id="ring-congestion">
+                                <svg viewBox="0 0 120 120">
+                                    <circle class="ring-bg" cx="60" cy="60" r="52"/>
+                                    <circle class="ring-fill ring-congestion" cx="60" cy="60" r="52" id="ring-congestion-fill"/>
+                                </svg>
+                                <div class="ring-value" id="output-congestion">50%</div>
+                            </div>
+                            <div class="output-label">Congestion Level</div>
+                        </div>
+                    </div>
+                    
+                    <!-- System breakdown -->
+                    <div class="system-breakdown">
+                        <h4>System Breakdown</h4>
+                        <div class="breakdown-row">
+                            <span class="system-label fuzzy-label">Fuzzy Logic</span>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill fuzzy-fill" id="fuzzy-bar" style="width: 40%"></div>
+                            </div>
+                            <span class="breakdown-value" id="fuzzy-weight">40%</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="system-label nn-label">Neural Network</span>
+                            <div class="breakdown-bar">
+                                <div class="breakdown-fill nn-fill" id="nn-bar" style="width: 60%"></div>
+                            </div>
+                            <span class="breakdown-value" id="nn-weight">60%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fuzzy Rules Visualization -->
+        <section class="section" id="rules-section">
+            <h2 class="section-title">
+                <span class="section-icon">📐</span>
+                Active Fuzzy Rules
+            </h2>
+            <div class="rules-container" id="rules-container">
+                <!-- Rules populated by JS -->
+            </div>
+        </section>
+
+        <!-- Metrics Dashboard -->
+        <section class="section" id="metrics-section">
+            <h2 class="section-title">
+                <span class="section-icon">📊</span>
+                Performance Metrics & System Comparison
+            </h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">🎯</div>
+                    <div class="metric-value" id="metric-r2">0.953</div>
+                    <div class="metric-label">Overall R² Score (NN)</div>
+                    <div class="metric-bar">
+                        <div class="metric-bar-fill" style="width: 95.3%"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">📉</div>
+                    <div class="metric-value" id="metric-rmse">3.59</div>
+                    <div class="metric-label">Overall RMSE</div>
+                    <div class="metric-bar">
+                        <div class="metric-bar-fill" style="width: 88%; background: linear-gradient(90deg, #00d2d3, #54a0ff)"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">📏</div>
+                    <div class="metric-value" id="metric-mae">2.38</div>
+                    <div class="metric-label">Overall MAE</div>
+                    <div class="metric-bar">
+                        <div class="metric-bar-fill" style="width: 92%; background: linear-gradient(90deg, #feca57, #ff9f43)"></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">⚡</div>
+                    <div class="metric-value">28</div>
+                    <div class="metric-label">Mamdani Fuzzy Rules</div>
+                    <div class="metric-bar">
+                        <div class="metric-bar-fill" style="width: 100%; background: linear-gradient(90deg, #5f27cd, #e94560)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quantitative System Comparison Table -->
+            <div class="comparison-table-wrapper">
+                <h3 style="margin-bottom: 1rem; color: var(--text-primary); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>⚖️</span> System Performance Benchmark (5,000 Test Scenarios)
+                </h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Output Variable</th>
+                            <th>Inference Model</th>
+                            <th>MSE</th>
+                            <th>RMSE</th>
+                            <th>MAE</th>
+                            <th>R² Fit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="3" style="font-weight: 600; vertical-align: middle; border-right: 1px solid rgba(255,255,255,0.05);">🟢 Green Light Duration (s)</td>
+                            <td><span class="pill-system pill-fuzzy">Mamdani Fuzzy</span></td>
+                            <td class="stat-sub">76.17</td>
+                            <td class="stat-sub">8.73 s</td>
+                            <td class="stat-sub">7.02 s</td>
+                            <td class="stat-sub">0.8007</td>
+                        </tr>
+                        <tr>
+                            <td><span class="pill-system pill-nn">Neural Network (MLP)</span></td>
+                            <td class="stat-good">17.47</td>
+                            <td class="stat-good">4.18 s</td>
+                            <td class="stat-good">3.25 s</td>
+                            <td class="stat-good">0.9543</td>
+                        </tr>
+                        <tr style="border-bottom: 2px solid var(--border-glass);">
+                            <td><span class="pill-system pill-nf">Hybrid Neuro-Fuzzy</span></td>
+                            <td class="stat-mid">31.36</td>
+                            <td class="stat-mid">5.60 s</td>
+                            <td class="stat-mid">4.29 s</td>
+                            <td class="stat-mid">0.9179</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="3" style="font-weight: 600; vertical-align: middle; border-right: 1px solid rgba(255,255,255,0.05);">⚡ Signal Priority (1–5)</td>
+                            <td><span class="pill-system pill-fuzzy">Mamdani Fuzzy</span></td>
+                            <td class="stat-sub">0.57</td>
+                            <td class="stat-sub">0.75</td>
+                            <td class="stat-sub">0.60</td>
+                            <td class="stat-sub">0.4796</td>
+                        </tr>
+                        <tr>
+                            <td><span class="pill-system pill-nn">Neural Network (MLP)</span></td>
+                            <td class="stat-good">0.04</td>
+                            <td class="stat-good">0.21</td>
+                            <td class="stat-good">0.14</td>
+                            <td class="stat-good">0.9595</td>
+                        </tr>
+                        <tr style="border-bottom: 2px solid var(--border-glass);">
+                            <td><span class="pill-system pill-nf">Hybrid Neuro-Fuzzy</span></td>
+                            <td class="stat-mid">0.20</td>
+                            <td class="stat-mid">0.45</td>
+                            <td class="stat-mid">0.30</td>
+                            <td class="stat-mid">0.8143</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="3" style="font-weight: 600; vertical-align: middle; border-right: 1px solid rgba(255,255,255,0.05);">🔴 Congestion Level (0–100%)</td>
+                            <td><span class="pill-system pill-fuzzy">Mamdani Fuzzy</span></td>
+                            <td class="stat-sub">136.20</td>
+                            <td class="stat-sub">11.67 %</td>
+                            <td class="stat-sub">8.10 %</td>
+                            <td class="stat-sub">0.6839</td>
+                        </tr>
+                        <tr>
+                            <td><span class="pill-system pill-nn">Neural Network (MLP)</span></td>
+                            <td class="stat-good">20.81</td>
+                            <td class="stat-good">4.56 %</td>
+                            <td class="stat-good">3.63 %</td>
+                            <td class="stat-good">0.9517</td>
+                        </tr>
+                        <tr>
+                            <td><span class="pill-system pill-nf">Hybrid Neuro-Fuzzy</span></td>
+                            <td class="stat-mid">62.39</td>
+                            <td class="stat-mid">7.90 %</td>
+                            <td class="stat-mid">5.40 %</td>
+                            <td class="stat-mid">0.8552</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Visualizations Gallery -->
+        <section class="section" id="gallery-section">
+            <h2 class="section-title">
+                <span class="section-icon">📈</span>
+                Analytical Graphs & Visualizations (12 Experimental Plots)
+            </h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem;">
+                Click any plot below to inspect high-resolution results generated by the execution pipeline.
+            </p>
+            <div class="plots-grid">
+                <div class="plot-card" onclick="openLightbox('plots/membership_functions.png', '1. Fuzzy Membership Functions (Triangular & Trapezoidal)')">
+                    <div class="plot-img-container">
+                        <img src="plots/membership_functions.png" alt="Membership Functions" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">1. Fuzzy Membership Functions</div>
+                        <div class="plot-desc">Defines linguistic terms (Low, Medium, High) for Vehicles, Density, Wait Time, and Outputs.</div>
+                    </div>
+                </div>
+
+                <div class="plot-card" onclick="openLightbox('plots/training_curves.png', '2. Neural Network Training & Validation Loss/MAE')">
+                    <div class="plot-img-container">
+                        <img src="plots/training_curves.png" alt="Training Curves" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">2. Training & Validation Curves</div>
+                        <div class="plot-desc">Convergence across epochs showing MSE loss and MAE metrics with early stopping.</div>
+                    </div>
+                </div>
+
+                <div class="plot-card" onclick="openLightbox('plots/actual_vs_predicted.png', '3. Neural Network — Actual vs Predicted Scatter Plots')">
+                    <div class="plot-img-container">
+                        <img src="plots/actual_vs_predicted.png" alt="Actual vs Predicted" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">3. Actual vs Predicted Correlation</div>
+                        <div class="plot-desc">Scatter distributions along identity lines for Green Duration, Priority, and Congestion.</div>
+                    </div>
+                </div>
+
+                <div class="plot-card" onclick="openLightbox('plots/residual_distributions.png', '4. Prediction Residual Distributions')">
+                    <div class="plot-img-container">
+                        <img src="plots/residual_distributions.png" alt="Residual Distributions" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">4. Residual (Error) Distributions</div>
+                        <div class="plot-desc">Gaussian-like error distribution centered around zero, confirming unbiased model fit.</div>
+                    </div>
+                </div>
+
+                <div class="plot-card" onclick="openLightbox('plots/system_comparison.png', '5. System Performance Comparison (RMSE, MAE, R²)')">
+                    <div class="plot-img-container">
+                        <img src="plots/system_comparison.png" alt="System Comparison" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">5. Comparative System Bar Charts</div>
+                        <div class="plot-desc">Direct head-to-head comparison between Fuzzy, Neural Network, and Neuro-Fuzzy models.</div>
+                    </div>
+                </div>
+
+                <div class="plot-card" onclick="openLightbox('plots/traffic_heatmap.png', '6. Traffic Signal Response Heatmap')">
+                    <div class="plot-img-container">
+                        <img src="plots/traffic_heatmap.png" alt="Traffic Heatmap" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">6. Traffic Response Heatmap</div>
+                        <div class="plot-desc">2D matrix displaying average green light duration across Vehicle Count × Density bins.</div>
+                    </div>
+                </div>
+
+                <div class="plot-card" onclick="openLightbox('plots/correlation_matrix.png', '7. Pearson Correlation Matrix')">
+                    <div class="plot-img-container">
+                        <img src="plots/correlation_matrix.png" alt="Correlation Matrix" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">7. Feature Correlation Matrix</div>
+                        <div class="plot-desc">Pearson coefficients highlighting strong positive dependencies with green duration.</div>
+                    </div>
+                </div>
+
+                <div class="plot-card" onclick="openLightbox('plots/data_distributions.png', '8. Synthetic Dataset Distributions')">
+                    <div class="plot-img-container">
+                        <img src="plots/data_distributions.png" alt="Data Distributions" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">8. Input & Output Distributions</div>
+                        <div class="plot-desc">Distribution shapes and standard deviations for all 4 inputs and 3 target variables.</div>
+                    </div>
+                </div>
+
+                <div class="plot-card" onclick="openLightbox('plots/emergency_comparison.png', '9. Emergency vs Normal Traffic Boxplots')">
+                    <div class="plot-img-container">
+                        <img src="plots/emergency_comparison.png" alt="Emergency Comparison" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">9. Emergency Vehicle Preemption</div>
+                        <div class="plot-desc">Boxplots showing immediate jump in priority (4.8+) and allocated green time upon emergency trigger.</div>
+                    </div>
+                </div>
+
+                <div class="plot-card" onclick="openLightbox('plots/fuzzy_surface_3d.png', '10. 3D Fuzzy Response Surface')">
+                    <div class="plot-img-container">
+                        <img src="plots/fuzzy_surface_3d.png" alt="Fuzzy Surface 3D" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">10. 3D Fuzzy Control Surface</div>
+                        <div class="plot-desc">Nonlinear control manifold mapping Traffic Density and Waiting Time to Green Duration.</div>
+                    </div>
+                </div>
+
+                <div class="plot-card" onclick="openLightbox('plots/time_patterns.png', '11. 24-Hour Diurnal Traffic Patterns')">
+                    <div class="plot-img-container">
+                        <img src="plots/time_patterns.png" alt="Time Patterns" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">11. Diurnal Rush-Hour Patterns</div>
+                        <div class="plot-desc">Time-of-day dynamics clearly delineating morning (8-10 AM) and evening (5-7 PM) traffic peaks.</div>
+                    </div>
+                </div>
+
+                <div class="plot-card" onclick="openLightbox('plots/neuro_fuzzy_breakdown.png', '12. Neuro-Fuzzy Component Contribution Breakdown')">
+                    <div class="plot-img-container">
+                        <img src="plots/neuro_fuzzy_breakdown.png" alt="Neuro-Fuzzy Breakdown" loading="lazy">
+                        <div class="plot-overlay"><span>🔍 Click to Zoom</span></div>
+                    </div>
+                    <div class="plot-info">
+                        <div class="plot-title">12. Neuro-Fuzzy Ensemble Fusion</div>
+                        <div class="plot-desc">Step-by-step trace demonstrating how Fuzzy and NN predictions blend adaptively.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Diagram -->
+        <section class="section" id="architecture-section">
+            <h2 class="section-title">
+                <span class="section-icon">🏗️</span>
+                System Architecture
+            </h2>
+            <div class="architecture-diagram">
+                <div class="arch-column inputs">
+                    <h3>Inputs</h3>
+                    <div class="arch-node input-node">🚗 Vehicles</div>
+                    <div class="arch-node input-node">📊 Density</div>
+                    <div class="arch-node input-node">⏱️ Wait Time</div>
+                    <div class="arch-node input-node">🚨 Emergency</div>
+                </div>
+                
+                <div class="arch-arrows">
+                    <div class="arrow-line"></div>
+                    <div class="arrow-line"></div>
+                </div>
+                
+                <div class="arch-column processing">
+                    <h3>Processing</h3>
+                    <div class="arch-node fuzzy-node">
+                        <div class="node-title">Fuzzy Logic</div>
+                        <div class="node-detail">28 Mamdani Rules</div>
+                        <div class="node-detail">Centroid Defuzz.</div>
+                    </div>
+                    <div class="arch-node nn-node">
+                        <div class="node-title">Neural Network</div>
+                        <div class="node-detail">4→64→128→64→32→3</div>
+                        <div class="node-detail">ReLU + Dropout</div>
+                    </div>
+                </div>
+                
+                <div class="arch-arrows">
+                    <div class="arrow-line"></div>
+                    <div class="arrow-line"></div>
+                </div>
+                
+                <div class="arch-column integration">
+                    <h3>Integration</h3>
+                    <div class="arch-node nf-node">
+                        <div class="node-title">Adaptive Weighted</div>
+                        <div class="node-title">Ensemble</div>
+                        <div class="node-detail">α·Fuzzy + (1-α)·NN</div>
+                    </div>
+                </div>
+                
+                <div class="arch-arrows">
+                    <div class="arrow-line"></div>
+                </div>
+                
+                <div class="arch-column outputs">
+                    <h3>Outputs</h3>
+                    <div class="arch-node output-node">🟢 Green Duration</div>
+                    <div class="arch-node output-node">⚡ Signal Priority</div>
+                    <div class="arch-node output-node">🔴 Congestion Level</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Smart Traffic Signal Control using Neuro-Fuzzy System — Fuzzy Logic & Neural Networks Project</p>
+        <p class="footer-sub">Built with Python • TensorFlow • scikit-fuzzy • Interactive Dashboard</p>
+    </footer>
+
+    <!-- Lightbox Modal for Visualizations -->
+    <div class="lightbox-modal" id="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-content" onclick="event.stopPropagation()">
+            <div class="lightbox-header">
+                <span class="lightbox-title" id="lightbox-title">Visualization Preview</span>
+                <button class="lightbox-close" onclick="closeLightbox()" title="Close">&times;</button>
+            </div>
+            <div class="lightbox-body">
+                <img id="lightbox-img" src="" alt="Enlarged Plot">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
