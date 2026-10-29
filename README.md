@@ -110,8 +110,8 @@ Benchmarked on 5,000 real-world simulated traffic scenarios:
 
 ### 1. Clone & Set Up Environment
 ```bash
-git clone https://github.com/ishan565/<REPO_NAME>.git
-cd <REPO_NAME>
+git clone https://github.com/ishan565/neuro-fuzzy-traffic-controller.git
+cd neuro-fuzzy-traffic-controller
 
 python3 -m venv venv
 source venv/bin/activate
@@ -138,7 +138,7 @@ Open [http://localhost:8085](http://localhost:8085) in your web browser.
 2. Under **Build and deployment** > **Source**, select `Deploy from a branch`.
 3. Select branch: `main` and folder: `/ (root)`.
 4. Click **Save**. Within 1–2 minutes, your live simulation will be accessible at:
-   `https://ishan565.github.io/<REPO_NAME>/`
+   `https://ishan565.github.io/neuro-fuzzy-traffic-controller/`
 
 ---
 
