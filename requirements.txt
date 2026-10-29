@@ -5,3 +5,5 @@ matplotlib>=3.7.0
 seaborn>=0.12.0
 pandas>=2.0.0
 scikit-learn>=1.2.0
+
+# https://neuro-fuzzy-traffic-controller.vercel.app/dashboard/index.html
