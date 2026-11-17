@@ -101,6 +101,31 @@
                     <div class="vehicles-east" id="vehicles-east"></div>
                     <div class="vehicles-west" id="vehicles-west"></div>
                 </div>
+
+                <!-- Phase Info Panel (Improvement 1) -->
+                <div class="phase-info-panel" id="phase-info-panel">
+                    <div class="phase-info-row">
+                        <div class="phase-badge" id="phase-badge-ns">
+                            <span class="phase-dot green-dot"></span>
+                            <span class="phase-direction">North–South</span>
+                            <span class="phase-status" id="phase-ns-status">Active</span>
+                        </div>
+                        <div class="phase-badge" id="phase-badge-ew">
+                            <span class="phase-dot red-dot"></span>
+                            <span class="phase-direction">East–West</span>
+                            <span class="phase-status" id="phase-ew-status">Waiting</span>
+                        </div>
+                    </div>
+                    <div class="phase-info-row phase-details-row">
+                        <div class="phase-detail"><span class="phase-detail-label">Current Phase</span><span class="phase-detail-value" id="detail-current-phase">North–South</span></div>
+                        <div class="phase-detail"><span class="phase-detail-label">Remaining</span><span class="phase-detail-value" id="detail-remaining-time">--</span></div>
+                        <div class="phase-detail"><span class="phase-detail-label">Green Duration</span><span class="phase-detail-value" id="detail-green-duration">45s</span></div>
+                    </div>
+                    <div class="phase-legend">
+                        <span class="legend-icon">ℹ️</span>
+                        <span class="legend-text">North–South and East–West are two opposing-direction signal phases. Only one phase receives green at a time; the other waits.</span>
+                    </div>
+                </div>
                 
                 <!-- Simulation Controls -->
                 <div class="sim-controls">
@@ -113,10 +138,142 @@
                     <button class="btn btn-secondary" id="btn-rush" onclick="triggerRushHour()">
                         <span class="btn-icon">🕐</span> Rush Hour
                     </button>
+                    <button class="btn btn-reset" id="btn-reset" onclick="resetSimulation()">
+                        <span class="btn-icon">🔄</span> Reset
+                    </button>
                     <div class="speed-control">
                         <label>Speed:</label>
                         <input type="range" id="sim-speed" min="1" max="10" value="5" oninput="updateSpeed(this.value)">
                         <span id="speed-label">5x</span>
+                    </div>
+                </div>
+
+                <!-- Quick Scenario Buttons (Improvement 4) -->
+                <div class="scenario-buttons">
+                    <span class="scenario-label">Quick Scenarios:</span>
+                    <button class="btn btn-scenario btn-scenario-low" onclick="loadScenario('low')">🟢 Low Traffic</button>
+                    <button class="btn btn-scenario btn-scenario-normal" onclick="loadScenario('normal')">🟡 Normal Traffic</button>
+                    <button class="btn btn-scenario btn-scenario-heavy" onclick="loadScenario('heavy')">🔴 Heavy Traffic</button>
+                    <button class="btn btn-scenario btn-scenario-emergency" onclick="loadScenario('emergency')">🚨 Emergency</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Direction-wise Statistics (Improvement 2) -->
+        <section class="section" id="direction-stats-section">
+            <h2 class="section-title">
+                <span class="section-icon">🧭</span>
+                Direction-wise Traffic Statistics
+            </h2>
+            <div class="direction-stats-grid">
+                <div class="direction-card direction-north" id="dir-card-north">
+                    <div class="direction-card-header">
+                        <span class="direction-emoji">⬆️</span>
+                        <span class="direction-name">North</span>
+                        <span class="direction-signal-badge" id="dir-signal-north">🔴 Red</span>
+                    </div>
+                    <div class="direction-card-body">
+                        <div class="dir-stat"><span class="dir-stat-label">Vehicles</span><span class="dir-stat-value" id="dir-vehicles-north">0</span></div>
+                        <div class="dir-stat"><span class="dir-stat-label">Density</span><span class="dir-stat-value" id="dir-density-north">0%</span></div>
+                        <div class="dir-stat"><span class="dir-stat-label">Wait Time</span><span class="dir-stat-value" id="dir-waiting-north">0s</span></div>
+                    </div>
+                </div>
+                <div class="direction-card direction-south" id="dir-card-south">
+                    <div class="direction-card-header">
+                        <span class="direction-emoji">⬇️</span>
+                        <span class="direction-name">South</span>
+                        <span class="direction-signal-badge" id="dir-signal-south">🔴 Red</span>
+                    </div>
+                    <div class="direction-card-body">
+                        <div class="dir-stat"><span class="dir-stat-label">Vehicles</span><span class="dir-stat-value" id="dir-vehicles-south">0</span></div>
+                        <div class="dir-stat"><span class="dir-stat-label">Density</span><span class="dir-stat-value" id="dir-density-south">0%</span></div>
+                        <div class="dir-stat"><span class="dir-stat-label">Wait Time</span><span class="dir-stat-value" id="dir-waiting-south">0s</span></div>
+                    </div>
+                </div>
+                <div class="direction-card direction-east" id="dir-card-east">
+                    <div class="direction-card-header">
+                        <span class="direction-emoji">➡️</span>
+                        <span class="direction-name">East</span>
+                        <span class="direction-signal-badge" id="dir-signal-east">🔴 Red</span>
+                    </div>
+                    <div class="direction-card-body">
+                        <div class="dir-stat"><span class="dir-stat-label">Vehicles</span><span class="dir-stat-value" id="dir-vehicles-east">0</span></div>
+                        <div class="dir-stat"><span class="dir-stat-label">Density</span><span class="dir-stat-value" id="dir-density-east">0%</span></div>
+                        <div class="dir-stat"><span class="dir-stat-label">Wait Time</span><span class="dir-stat-value" id="dir-waiting-east">0s</span></div>
+                    </div>
+                </div>
+                <div class="direction-card direction-west" id="dir-card-west">
+                    <div class="direction-card-header">
+                        <span class="direction-emoji">⬅️</span>
+                        <span class="direction-name">West</span>
+                        <span class="direction-signal-badge" id="dir-signal-west">🔴 Red</span>
+                    </div>
+                    <div class="direction-card-body">
+                        <div class="dir-stat"><span class="dir-stat-label">Vehicles</span><span class="dir-stat-value" id="dir-vehicles-west">0</span></div>
+                        <div class="dir-stat"><span class="dir-stat-label">Density</span><span class="dir-stat-value" id="dir-density-west">0%</span></div>
+                        <div class="dir-stat"><span class="dir-stat-label">Wait Time</span><span class="dir-stat-value" id="dir-waiting-west">0s</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Decision Insights (Improvement 3) -->
+        <section class="section" id="ai-insights-section">
+            <h2 class="section-title">
+                <span class="section-icon">🧠</span>
+                AI Decision Insights
+            </h2>
+            <div class="ai-insights-container">
+                <div class="ai-insight-card ai-explanation-card">
+                    <h3 class="card-title">💡 Decision Explanation</h3>
+                    <p class="ai-explanation-text" id="ai-explanation-text">Start the simulation to see AI decision explanations in real time.</p>
+                </div>
+                <div class="ai-insight-card">
+                    <h3 class="card-title">📊 Prediction Breakdown</h3>
+                    <div class="ai-predictions-grid">
+                        <div class="ai-pred-row">
+                            <span class="ai-pred-label">Selected Phase</span>
+                            <span class="ai-pred-value" id="ai-selected-phase">North–South</span>
+                        </div>
+                        <div class="ai-pred-row">
+                            <span class="ai-pred-label">Avg Vehicles (input)</span>
+                            <span class="ai-pred-value" id="ai-input-vehicles">0</span>
+                        </div>
+                        <div class="ai-pred-row">
+                            <span class="ai-pred-label">Avg Density (input)</span>
+                            <span class="ai-pred-value" id="ai-input-density">0%</span>
+                        </div>
+                        <div class="ai-pred-row">
+                            <span class="ai-pred-label">Avg Wait Time (input)</span>
+                            <span class="ai-pred-value" id="ai-input-waiting">0s</span>
+                        </div>
+                        <div class="ai-pred-divider"></div>
+                        <div class="ai-pred-row">
+                            <span class="ai-pred-label fuzzy-label">Fuzzy Prediction</span>
+                            <span class="ai-pred-value" id="ai-fuzzy-pred">--</span>
+                        </div>
+                        <div class="ai-pred-row">
+                            <span class="ai-pred-label nn-label">Neural Network Prediction</span>
+                            <span class="ai-pred-value" id="ai-nn-pred">--</span>
+                        </div>
+                        <div class="ai-pred-row ai-pred-highlight">
+                            <span class="ai-pred-label">Hybrid Recommendation</span>
+                            <span class="ai-pred-value" id="ai-hybrid-pred">--</span>
+                        </div>
+                        <div class="ai-pred-divider"></div>
+                        <div class="ai-pred-row">
+                            <span class="ai-pred-label fuzzy-label">Fuzzy Contribution</span>
+                            <span class="ai-pred-value" id="ai-fuzzy-pct">35%</span>
+                        </div>
+                        <div class="ai-pred-row">
+                            <span class="ai-pred-label nn-label">Neural Network Contribution</span>
+                            <span class="ai-pred-value" id="ai-nn-pct">65%</span>
+                        </div>
+                        <div class="ai-pred-divider"></div>
+                        <div class="ai-pred-row">
+                            <span class="ai-pred-label">Active Fuzzy Rules</span>
+                            <span class="ai-pred-value" id="ai-active-rules">--</span>
+                        </div>
                     </div>
                 </div>
             </div>

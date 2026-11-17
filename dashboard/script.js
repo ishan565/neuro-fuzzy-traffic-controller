@@ -436,6 +436,11 @@ function updateSimDisplay(remaining) {
     
     // Update vehicle dots
     updateVehicleDots();
+    
+    // Update new panels
+    updatePhaseInfoPanel(remaining);
+    updateDirectionStats();
+    updateAIInsights();
 }
 
 function updateVehicleDots() {
@@ -526,6 +531,321 @@ function updateSpeed(val) {
 
 
 // ============================================================
+// IMPROVEMENT 1: Phase Info Panel
+// ============================================================
+
+function updatePhaseInfoPanel(remaining) {
+    const isNS = currentGreenPair === 'ns';
+    
+    // Phase badges
+    const nsBadge = document.getElementById('phase-badge-ns');
+    const ewBadge = document.getElementById('phase-badge-ew');
+    const nsStatus = document.getElementById('phase-ns-status');
+    const ewStatus = document.getElementById('phase-ew-status');
+    
+    if (nsBadge && ewBadge) {
+        nsBadge.className = 'phase-badge ' + (isNS ? 'active-phase' : 'waiting-phase');
+        ewBadge.className = 'phase-badge ' + (isNS ? 'waiting-phase' : 'active-phase');
+        
+        // Dots
+        nsBadge.querySelector('.phase-dot').className = 'phase-dot ' + (isNS ? 'green-dot' : 'red-dot');
+        ewBadge.querySelector('.phase-dot').className = 'phase-dot ' + (isNS ? 'red-dot' : 'green-dot');
+        
+        // Status text
+        nsStatus.textContent = isNS ? 'Active' : 'Waiting';
+        nsStatus.className = 'phase-status ' + (isNS ? 'status-active' : 'status-waiting');
+        ewStatus.textContent = isNS ? 'Waiting' : 'Active';
+        ewStatus.className = 'phase-status ' + (isNS ? 'status-waiting' : 'status-active');
+    }
+    
+    // Phase details
+    const detailPhase = document.getElementById('detail-current-phase');
+    const detailRemaining = document.getElementById('detail-remaining-time');
+    const detailGreen = document.getElementById('detail-green-duration');
+    
+    if (detailPhase) detailPhase.textContent = isNS ? 'North–South' : 'East–West';
+    if (detailRemaining) detailRemaining.textContent = (remaining != null && remaining >= 0) ? remaining + 's' : '--';
+    if (detailGreen) detailGreen.textContent = currentPhaseGreenTime + 's';
+}
+
+// ============================================================
+// IMPROVEMENT 2: Direction-wise Statistics
+// ============================================================
+
+function updateDirectionStats() {
+    const directions = ['north', 'south', 'east', 'west'];
+    
+    directions.forEach(dir => {
+        const road = roads[dir];
+        const isGreen = (currentGreenPair === 'ns' && (dir === 'north' || dir === 'south')) ||
+                        (currentGreenPair === 'ew' && (dir === 'east' || dir === 'west'));
+        
+        // Vehicle count
+        const vEl = document.getElementById(`dir-vehicles-${dir}`);
+        if (vEl) vEl.textContent = road.vehicles;
+        
+        // Density
+        const dEl = document.getElementById(`dir-density-${dir}`);
+        if (dEl) dEl.textContent = Math.round(road.density) + '%';
+        
+        // Wait time
+        const wEl = document.getElementById(`dir-waiting-${dir}`);
+        if (wEl) wEl.textContent = Math.round(road.waiting) + 's';
+        
+        // Signal badge
+        const sBadge = document.getElementById(`dir-signal-${dir}`);
+        if (sBadge) {
+            sBadge.textContent = isGreen ? '🟢 Green' : '🔴 Red';
+            sBadge.className = 'direction-signal-badge ' + (isGreen ? 'badge-green' : 'badge-red');
+        }
+        
+        // Card border highlighting
+        const card = document.getElementById(`dir-card-${dir}`);
+        if (card) {
+            card.className = 'direction-card direction-' + dir + ' ' + (isGreen ? 'signal-green' : 'signal-red');
+        }
+    });
+}
+
+// ============================================================
+// IMPROVEMENT 3: AI Decision Insights
+// ============================================================
+
+function updateAIInsights() {
+    const isNS = currentGreenPair === 'ns';
+    const primaryDirs = isNS ? ['north', 'south'] : ['east', 'west'];
+    const phaseName = isNS ? 'North–South' : 'East–West';
+    
+    const avgVehicles = (roads[primaryDirs[0]].vehicles + roads[primaryDirs[1]].vehicles) / 2;
+    const avgDensity = (roads[primaryDirs[0]].density + roads[primaryDirs[1]].density) / 2;
+    const avgWaiting = (roads[primaryDirs[0]].waiting + roads[primaryDirs[1]].waiting) / 2;
+    const emg = emergencyMode ? 1 : 0;
+    
+    // Run both sub-systems to show breakdown
+    const fuzzy = fuzzyInference(avgVehicles, avgDensity, avgWaiting, emg);
+    const nn = nnPrediction(avgVehicles, avgDensity, avgWaiting, emg);
+    const hybrid = neuroFuzzyPredict(avgVehicles, avgDensity, avgWaiting, emg);
+    
+    // Selected phase
+    const spEl = document.getElementById('ai-selected-phase');
+    if (spEl) spEl.textContent = phaseName;
+    
+    // Inputs
+    const ivEl = document.getElementById('ai-input-vehicles');
+    if (ivEl) ivEl.textContent = Math.round(avgVehicles);
+    
+    const idEl = document.getElementById('ai-input-density');
+    if (idEl) idEl.textContent = Math.round(avgDensity) + '%';
+    
+    const iwEl = document.getElementById('ai-input-waiting');
+    if (iwEl) iwEl.textContent = Math.round(avgWaiting) + 's';
+    
+    // Predictions
+    const fpEl = document.getElementById('ai-fuzzy-pred');
+    if (fpEl) fpEl.textContent = fuzzy.green_duration + 's';
+    
+    const npEl = document.getElementById('ai-nn-pred');
+    if (npEl) npEl.textContent = nn.green_duration + 's';
+    
+    const hpEl = document.getElementById('ai-hybrid-pred');
+    if (hpEl) hpEl.textContent = hybrid.green_duration + 's';
+    
+    // Weights
+    const fPctEl = document.getElementById('ai-fuzzy-pct');
+    if (fPctEl) fPctEl.textContent = Math.round(hybrid.fuzzy_weight * 100) + '%';
+    
+    const nPctEl = document.getElementById('ai-nn-pct');
+    if (nPctEl) nPctEl.textContent = Math.round(hybrid.nn_weight * 100) + '%';
+    
+    // Active rules
+    const arEl = document.getElementById('ai-active-rules');
+    if (arEl) {
+        if (hybrid.active_rules.length > 0) {
+            arEl.textContent = hybrid.active_rules.map(r => 'R' + r.id).join(', ');
+        } else {
+            arEl.textContent = 'None';
+        }
+    }
+    
+    // Explanation
+    const exEl = document.getElementById('ai-explanation-text');
+    if (exEl) {
+        exEl.classList.add('has-content');
+        exEl.textContent = generateExplanation(phaseName, avgVehicles, avgDensity, avgWaiting, hybrid, fuzzy, nn);
+    }
+}
+
+function generateExplanation(phaseName, avgVehicles, avgDensity, avgWaiting, hybrid, fuzzy, nn) {
+    let parts = [];
+    
+    // Phase explanation
+    parts.push(`${phaseName} phase is currently being served.`);
+    
+    // Traffic level
+    if (emergencyMode) {
+        parts.push('Emergency mode is active — the system is prioritizing immediate clearance with maximum green allocation.');
+    } else if (avgDensity > 70 || avgVehicles > 70) {
+        parts.push(`Traffic demand is high (${Math.round(avgVehicles)} avg vehicles, ${Math.round(avgDensity)}% density), requiring extended green time of ${hybrid.green_duration}s.`);
+    } else if (avgDensity > 35 || avgVehicles > 35) {
+        parts.push(`Traffic demand is moderate (${Math.round(avgVehicles)} avg vehicles, ${Math.round(avgDensity)}% density), with an adaptive green duration of ${hybrid.green_duration}s.`);
+    } else {
+        parts.push(`Traffic is light (${Math.round(avgVehicles)} avg vehicles, ${Math.round(avgDensity)}% density), so the system assigns a shorter green phase of ${hybrid.green_duration}s.`);
+    }
+    
+    // Wait time insight
+    if (avgWaiting > 100) {
+        parts.push(`The opposing phase has accumulated significant waiting time (${Math.round(avgWaiting)}s), and the system will switch sooner to maintain fairness.`);
+    }
+    
+    // Fuzzy vs NN comparison
+    const fwPct = Math.round(hybrid.fuzzy_weight * 100);
+    const nwPct = Math.round(hybrid.nn_weight * 100);
+    if (fuzzy.green_duration !== nn.green_duration) {
+        parts.push(`The fuzzy system suggests ${fuzzy.green_duration}s while the neural network suggests ${nn.green_duration}s — the hybrid blends them at ${fwPct}/${nwPct} ratio.`);
+    }
+    
+    // Active rules
+    if (hybrid.active_rules.length > 0) {
+        parts.push(`${hybrid.active_rules.length} fuzzy rule(s) are currently firing.`);
+    }
+    
+    return parts.join(' ');
+}
+
+// ============================================================
+// IMPROVEMENT 4: Quick Demonstration Scenarios
+// ============================================================
+
+function loadScenario(scenario) {
+    const vehiclesSlider = document.getElementById('input-vehicles');
+    const densitySlider = document.getElementById('input-density');
+    const waitingSlider = document.getElementById('input-waiting');
+    const emergencyToggle = document.getElementById('input-emergency');
+    
+    switch (scenario) {
+        case 'low':
+            vehiclesSlider.value = 10;
+            densitySlider.value = 12;
+            waitingSlider.value = 15;
+            emergencyToggle.checked = false;
+            // Deactivate emergency mode if on
+            if (emergencyMode) triggerEmergency();
+            break;
+        case 'normal':
+            vehiclesSlider.value = 45;
+            densitySlider.value = 48;
+            waitingSlider.value = 70;
+            emergencyToggle.checked = false;
+            if (emergencyMode) triggerEmergency();
+            break;
+        case 'heavy':
+            vehiclesSlider.value = 88;
+            densitySlider.value = 92;
+            waitingSlider.value = 160;
+            emergencyToggle.checked = false;
+            if (emergencyMode) triggerEmergency();
+            break;
+        case 'emergency':
+            vehiclesSlider.value = 75;
+            densitySlider.value = 80;
+            waitingSlider.value = 140;
+            emergencyToggle.checked = true;
+            // Activate emergency mode if not already on
+            if (!emergencyMode) triggerEmergency();
+            break;
+    }
+    
+    // Refresh the manual input prediction panel
+    updateInput();
+}
+
+// ============================================================
+// IMPROVEMENT 5: Reset Simulation
+// ============================================================
+
+function resetSimulation() {
+    // 1. Stop the running simulation
+    if (simulationRunning) {
+        stopSimulation();
+    }
+    
+    // 2. Clear any lingering interval (safety)
+    if (simulationInterval) {
+        clearInterval(simulationInterval);
+        simulationInterval = null;
+    }
+    
+    // 3. Reset road states
+    Object.keys(roads).forEach(dir => {
+        roads[dir].vehicles = 0;
+        roads[dir].density = 0;
+        roads[dir].waiting = 0;
+        roads[dir].greenTime = 0;
+        roads[dir].state = 'red';
+        roads[dir].timer = 0;
+    });
+    
+    // 4. Reset phase
+    currentGreenPair = 'ns';
+    phaseTimer = 0;
+    currentPhaseGreenTime = 45;
+    
+    // 5. Reset emergency and rush hour
+    if (emergencyMode) triggerEmergency();
+    if (rushHourMode) triggerRushHour();
+    
+    // 6. Reset signal lights to initial state (NS green, EW red)
+    updateSignalPhase();
+    
+    // 7. Reset vehicle count and timer displays
+    ['north', 'south', 'east', 'west'].forEach(dir => {
+        document.getElementById(`${dir}-count`).textContent = '0 vehicles';
+        document.getElementById(`${dir}-timer`).textContent = '--';
+        
+        // Clear vehicle dots
+        const container = document.getElementById(`vehicles-${dir}`);
+        if (container) container.innerHTML = '';
+    });
+    
+    // 8. Reset start button text
+    document.getElementById('btn-start').innerHTML = '<span class="btn-icon">▶</span> Start Simulation';
+    
+    // 9. Reset direction stats
+    updateDirectionStats();
+    
+    // 10. Reset phase info panel
+    updatePhaseInfoPanel(null);
+    
+    // 11. Reset AI insights
+    const exEl = document.getElementById('ai-explanation-text');
+    if (exEl) {
+        exEl.classList.remove('has-content');
+        exEl.textContent = 'Start the simulation to see AI decision explanations in real time.';
+    }
+    
+    // Reset AI prediction values
+    ['ai-selected-phase', 'ai-input-vehicles', 'ai-input-density', 'ai-input-waiting',
+     'ai-fuzzy-pred', 'ai-nn-pred', 'ai-hybrid-pred', 'ai-fuzzy-pct', 'ai-nn-pct', 'ai-active-rules'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            if (id === 'ai-selected-phase') el.textContent = 'North–South';
+            else if (id === 'ai-fuzzy-pct') el.textContent = '35%';
+            else if (id === 'ai-nn-pct') el.textContent = '65%';
+            else if (id.includes('input')) el.textContent = '0';
+            else el.textContent = '--';
+        }
+    });
+    
+    // 12. Reset manual sliders to default
+    document.getElementById('input-vehicles').value = 50;
+    document.getElementById('input-density').value = 50;
+    document.getElementById('input-waiting').value = 90;
+    document.getElementById('input-emergency').checked = false;
+    updateInput();
+}
+
+
+// ============================================================
 // INITIALIZATION
 // ============================================================
 
@@ -540,6 +860,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('south-green').classList.add('active');
     document.getElementById('east-red').classList.add('active');
     document.getElementById('west-red').classList.add('active');
+    
+    // Initialize new panels
+    updatePhaseInfoPanel(null);
+    updateDirectionStats();
     
     // Animate sections on scroll
     const observer = new IntersectionObserver((entries) => {

@@ -202,7 +202,7 @@ body {
 
 /* === Section Styling === */
 .section {
-    margin-bottom: 3rem;
+    margin-bottom: 3.5rem;
     animation: fadeInUp 0.6s ease-out;
 }
 
@@ -219,6 +219,8 @@ body {
     align-items: center;
     gap: 0.75rem;
     color: var(--text-primary);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-glass);
 }
 
 .section-icon {
@@ -1282,3 +1284,471 @@ input[type="range"]::-webkit-slider-thumb:hover {
     border-radius: var(--radius-sm);
 }
 
+
+/* ============================================
+   IMPROVEMENTS — Phase Info, Direction Stats,
+   AI Insights, Scenarios, Reset, Visual Polish
+   ============================================ */
+
+/* === Phase Info Panel (Improvement 1) === */
+.phase-info-panel {
+    width: 100%;
+    max-width: 620px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.phase-info-row {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.phase-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: var(--transition);
+    min-width: 180px;
+    justify-content: center;
+}
+
+.phase-badge.active-phase {
+    border-color: rgba(0, 210, 211, 0.4);
+    background: rgba(0, 210, 211, 0.08);
+    box-shadow: 0 0 12px rgba(0, 210, 211, 0.15);
+}
+
+.phase-badge.waiting-phase {
+    border-color: rgba(233, 69, 96, 0.3);
+    background: rgba(233, 69, 96, 0.05);
+}
+
+.phase-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.phase-dot.green-dot {
+    background: #33ff33;
+    box-shadow: 0 0 8px rgba(51, 255, 51, 0.6);
+}
+
+.phase-dot.red-dot {
+    background: #ff3333;
+    box-shadow: 0 0 8px rgba(255, 51, 51, 0.5);
+}
+
+.phase-direction {
+    color: var(--text-primary);
+}
+
+.phase-status {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.phase-status.status-active {
+    color: #33ff33;
+    background: rgba(51, 255, 51, 0.1);
+}
+
+.phase-status.status-waiting {
+    color: #ff6b81;
+    background: rgba(255, 107, 129, 0.1);
+}
+
+.phase-details-row {
+    justify-content: space-around;
+}
+
+.phase-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.phase-detail-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.phase-detail-value {
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--accent-yellow);
+}
+
+.phase-legend {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    background: rgba(84, 160, 255, 0.05);
+    border: 1px solid rgba(84, 160, 255, 0.12);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.legend-icon {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+}
+
+/* === Direction-wise Statistics (Improvement 2) === */
+.direction-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.direction-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-md);
+    padding: 1.2rem;
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-card);
+    transition: var(--transition);
+}
+
+.direction-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.direction-card.signal-green {
+    border-color: rgba(0, 210, 211, 0.3);
+    box-shadow: 0 0 16px rgba(0, 210, 211, 0.1);
+}
+
+.direction-card.signal-red {
+    border-color: rgba(233, 69, 96, 0.15);
+}
+
+.direction-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border-glass);
+}
+
+.direction-emoji {
+    font-size: 1.3rem;
+}
+
+.direction-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.direction-signal-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-family: var(--font-mono);
+}
+
+.direction-signal-badge.badge-green {
+    color: #33ff33;
+    background: rgba(51, 255, 51, 0.1);
+    border: 1px solid rgba(51, 255, 51, 0.25);
+}
+
+.direction-signal-badge.badge-red {
+    color: #ff6b81;
+    background: rgba(255, 107, 129, 0.08);
+    border: 1px solid rgba(255, 107, 129, 0.2);
+}
+
+.direction-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.dir-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dir-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.dir-stat-value {
+    font-size: 0.88rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+}
+
+/* === AI Decision Insights (Improvement 3) === */
+.ai-insights-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.ai-insight-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-card);
+    transition: var(--transition);
+}
+
+.ai-insight-card:hover {
+    border-color: rgba(233, 69, 96, 0.2);
+}
+
+.ai-explanation-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-explanation-text {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+.ai-explanation-text.has-content {
+    color: var(--text-primary);
+}
+
+.ai-predictions-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ai-pred-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.35rem 0;
+}
+
+.ai-pred-row.ai-pred-highlight {
+    background: rgba(0, 210, 211, 0.06);
+    border: 1px solid rgba(0, 210, 211, 0.15);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.6rem;
+    margin: 0.15rem 0;
+}
+
+.ai-pred-label {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.ai-pred-label.fuzzy-label {
+    color: var(--accent-red);
+}
+
+.ai-pred-label.nn-label {
+    color: var(--accent-blue);
+}
+
+.ai-pred-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+}
+
+.ai-pred-divider {
+    height: 1px;
+    background: var(--border-glass);
+    margin: 0.25rem 0;
+}
+
+/* === Quick Scenario Buttons (Improvement 4) === */
+.scenario-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.scenario-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.btn-scenario {
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--border-glass);
+    border-radius: 100px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--bg-glass);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    backdrop-filter: blur(10px);
+}
+
+.btn-scenario:hover {
+    transform: translateY(-2px);
+}
+
+.btn-scenario-low:hover {
+    border-color: rgba(0, 210, 211, 0.4);
+    background: rgba(0, 210, 211, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 210, 211, 0.2);
+}
+
+.btn-scenario-normal:hover {
+    border-color: rgba(254, 202, 87, 0.4);
+    background: rgba(254, 202, 87, 0.1);
+    box-shadow: 0 4px 16px rgba(254, 202, 87, 0.2);
+}
+
+.btn-scenario-heavy:hover {
+    border-color: rgba(233, 69, 96, 0.4);
+    background: rgba(233, 69, 96, 0.1);
+    box-shadow: 0 4px 16px rgba(233, 69, 96, 0.2);
+}
+
+.btn-scenario-emergency:hover {
+    border-color: rgba(233, 69, 96, 0.5);
+    background: rgba(233, 69, 96, 0.15);
+    box-shadow: 0 4px 16px rgba(233, 69, 96, 0.3);
+}
+
+/* === Reset Button (Improvement 5) === */
+.btn-reset {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-glass);
+    backdrop-filter: blur(10px);
+}
+
+.btn-reset:hover {
+    background: rgba(255, 159, 67, 0.1);
+    border-color: rgba(255, 159, 67, 0.3);
+    color: var(--accent-orange);
+    transform: translateY(-2px);
+}
+
+/* === Visual Polish (Improvement 6) === */
+
+/* Better card title consistency */
+.card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid var(--border-glass);
+}
+
+/* Improved button active state */
+.btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Smooth transitions on control card */
+.control-card {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* Better metric-card spacing */
+.metric-card {
+    padding: 1.5rem 1.2rem;
+}
+
+/* Responsive improvements */
+@media (max-width: 1024px) {
+    .direction-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .ai-insights-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .direction-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .ai-insights-container {
+        grid-template-columns: 1fr;
+    }
+    .phase-badge {
+        min-width: 140px;
+        font-size: 0.78rem;
+    }
+    .phase-details-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .scenario-buttons {
+        gap: 0.4rem;
+    }
+    .btn-scenario {
+        font-size: 0.72rem;
+        padding: 0.4rem 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .direction-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
